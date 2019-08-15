@@ -1,72 +1,87 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
-
-import Bio from "../components/bio"
+import styled from "styled-components"
 import Layout from "../components/layout"
+import Img from "gatsby-image"
 import SEO from "../components/seo"
-import { rhythm } from "../utils/typography"
 
-class BlogIndex extends React.Component {
-  render() {
-    const { data } = this.props
-    const siteTitle = data.site.siteMetadata.title
-    const posts = data.allMarkdownRemark.edges
-
-    return (
-      <Layout location={this.props.location} title={siteTitle}>
-        <SEO title="All posts" />
-        <Bio />
-        {posts.map(({ node }) => {
-          const title = node.frontmatter.title || node.fields.slug
-          return (
-            <article key={node.fields.slug}>
-              <header>
-                <h3
-                  style={{
-                    marginBottom: rhythm(1 / 4),
-                  }}
-                >
-                  <Link style={{ boxShadow: `none` }} to={node.fields.slug}>
-                    {title}
-                  </Link>
-                </h3>
-                <small>{node.frontmatter.date}</small>
-              </header>
-              <section>
-                <p
-                  dangerouslySetInnerHTML={{
-                    __html: node.frontmatter.description || node.excerpt,
-                  }}
+const Li = styled.li`
+  border-bottom: 1px solid black;
+  padding-bottom: 10px;
+  margin-bottom: 45px;
+`
+const IndexPage = ({ data }) => {
+  return (
+    <Layout>
+      <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
+      <ul style={{ listStyle: "none" }}>
+        {data.allWordpressPost.edges.map(post => (
+          <Li key={post.node.wordpress_id}>
+            <Link
+              to={`/post/${post.node.slug}`}
+              style={{
+                color: "black",
+                textDecoration: "none",
+                boxShadow:'none'
+              }}
+            >
+              {post.node.featured_media && (
+                <Img
+                  fixed={
+                    post.node.featured_media.localFile.childImageSharp.fixed
+                  }
+                  alt={post.node.title}
+                  style={{marginBottom:20}}
                 />
-              </section>
-            </article>
-          )
-        })}
-      </Layout>
-    )
-  }
+              )}
+            </Link>
+              <div>
+                <Link
+                  to={`/post/${post.node.slug}`}
+                  style={{
+                    // display: "flex",
+                    color: "black",
+                    textDecoration: "none",
+                  }}
+                > <h3
+                  dangerouslySetInnerHTML={{ __html: post.node.title }}
+                  style={{ fontSize: 33, marginTop:0 }}
+                /></Link>
+                <p style={{ margin: 0, color: "grey", fontSize:16, marginTop:8, marginBottom:10 }}>
+                  Written by {post.node.author.name} on {post.node.date}
+                </p>
+                <div dangerouslySetInnerHTML={{ __html: post.node.excerpt }} />
+              </div>
+
+          </Li>
+        ))}
+      </ul>
+    </Layout>
+  )
 }
-
-export default BlogIndex
-
-export const pageQuery = graphql`
+export default IndexPage
+export const query = graphql`
   query {
-    site {
-      siteMetadata {
-        title
-      }
-    }
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+    allWordpressPost {
       edges {
         node {
+          title
+          content
+          slug
           excerpt
-          fields {
-            slug
+          wordpress_id
+          author {
+            name
           }
-          frontmatter {
-            date(formatString: "MMMM DD, YYYY")
-            title
-            description
+          date(formatString: "MMMM DD, YYYY")
+          featured_media {
+            localFile {
+              childImageSharp {
+                fixed(width: 1000) {
+                  ...GatsbyImageSharpFixed
+                }
+              }
+            }
           }
         }
       }

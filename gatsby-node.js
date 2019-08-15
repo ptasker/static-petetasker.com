@@ -1,64 +1,54 @@
 const path = require(`path`)
 const { createFilePath } = require(`gatsby-source-filesystem`)
-
-exports.createPages = async ({ graphql, actions }) => {
+exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
-
-  const blogPost = path.resolve(`./src/templates/blog-post.js`)
-  const result = await graphql(
-    `
-      {
-        allMarkdownRemark(
-          sort: { fields: [frontmatter___date], order: DESC }
-          limit: 1000
-        ) {
-          edges {
-            node {
-              fields {
-                slug
-              }
-              frontmatter {
-                title
-              }
-            }
+  const BlogPostTemplate = path.resolve("./src/templates/blog-post.js")
+  const PageTemplate = path.resolve("./src/templates/page.js")
+  const result = await graphql(`
+    {
+      allWordpressPost {
+        edges {
+          node {
+            slug
+            wordpress_id
           }
         }
       }
-    `
-  )
-
+      allWordpressPage {
+        edges {
+          node {
+            slug
+            wordpress_id
+          }
+        }
+      }
+    }
+  `)
   if (result.errors) {
-    throw result.errors
+    reporter.panicOnBuild(`Error while running GraphQL query.`)
+    return
   }
+  const BlogPosts = result.data.allWordpressPost.edges
 
-  // Create blog posts pages.
-  const posts = result.data.allMarkdownRemark.edges
-
-  posts.forEach((post, index) => {
-    const previous = index === posts.length - 1 ? null : posts[index + 1].node
-    const next = index === 0 ? null : posts[index - 1].node
-
+  BlogPosts.forEach(post => {
     createPage({
-      path: post.node.fields.slug,
-      component: blogPost,
+      path: `/post/${post.node.slug}`,
+      component: BlogPostTemplate,
       context: {
-        slug: post.node.fields.slug,
-        previous,
-        next,
+        id: post.node.wordpress_id,
+      },
+    })
+  })
+
+  const Pages = result.data.allWordpressPage.edges
+  Pages.forEach(post => {
+    createPage({
+      path: `/${post.node.slug}`,
+      component: PageTemplate,
+      context: {
+        id: post.node.wordpress_id,
       },
     })
   })
 }
 
-exports.onCreateNode = ({ node, actions, getNode }) => {
-  const { createNodeField } = actions
-
-  if (node.internal.type === `MarkdownRemark`) {
-    const value = createFilePath({ node, getNode })
-    createNodeField({
-      name: `slug`,
-      node,
-      value,
-    })
-  }
-}
