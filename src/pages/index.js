@@ -18,7 +18,7 @@ const IndexPage = ({ data }) => {
         {data.allWordpressPost.edges.map(post => (
           <Li key={post.node.wordpress_id}>
             <Link
-              to={`/post/${post.node.slug}`}
+              to={`/${post.node.slug}`}
               style={{
                 color: "black",
                 textDecoration: "none",
@@ -37,7 +37,7 @@ const IndexPage = ({ data }) => {
             </Link>
               <div>
                 <Link
-                  to={`/post/${post.node.slug}`}
+                  to={`/${post.node.slug}`}
                   style={{
                     // display: "flex",
                     color: "black",

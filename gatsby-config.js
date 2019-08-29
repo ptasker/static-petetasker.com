@@ -67,7 +67,7 @@ module.exports = {
         // Search and Replace Urls across WordPress content.
         searchAndReplaceContentUrls: {
           sourceUrl: `${process.env.GATSBY_WP_PROTOCOL}://${process.env.GATSBY_WP_URL}`,
-          replacementUrl: "http://localhost:8000",
+          replacementUrl: process.env.GATSBY_REPLACEMENT_URL,
         },
         // Set how many simultaneous requests are sent at once.
         concurrentRequests: 10,

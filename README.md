@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/08684b80-fbc1-49b4-89e0-69738b945e94/deploy-status)](https://app.netlify.com/sites/sleepy-poincare-53f6e1/deploys)
+
 <!-- AUTO-GENERATED-CONTENT:START (STARTER) -->
 <p align="center">
   <a href="https://www.gatsbyjs.org">
@@ -95,3 +97,5 @@ Looking for more guidance? Full documentation for Gatsby lives [on the website](
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/gatsbyjs/gatsby-starter-blog)
 
 <!-- AUTO-GENERATED-CONTENT:END -->
+
+
